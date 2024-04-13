@@ -14,9 +14,8 @@ def main():
         'UCECdSNRGBOi5im0sfZvlkIg'  # fct-altai
     ]
 
-    data = get_youtube_data(API_KEY, channel_ids)
-    print(data)
-    # create_database('youtube', params)
+    # data = get_youtube_data(API_KEY, channel_ids)
+    create_database('youtube', params)
     # save_data_to_database(data, 'youtube', params)
 
 

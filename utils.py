@@ -1,6 +1,6 @@
 from typing import Any
-
 from googleapiclient.discovery import build
+import psycopg2
 
 
 def get_youtube_data(key: str, channel_ids: list[str]) -> list[dict[str, Any]]:
@@ -27,7 +27,40 @@ def get_youtube_data(key: str, channel_ids: list[str]) -> list[dict[str, Any]]:
 
 
 def create_database(database_name: str, params: dict) -> None:
-    pass
+    conn = psycopg2.connect(dbname='postgres', **params)
+    conn.autocommit = True
+    cur = conn.cursor()
+
+    cur.execute(f'DROP DATABASE {database_name}')
+    cur.execute(f'CREATE DATABASE {database_name}')
+
+    cur.close()
+    conn.close()
+
+    conn = psycopg2.connect(dbname=f'{database_name}', **params)
+    with conn.cursor() as cur:
+        cur.execute("""
+            CREATE TABLE channel (
+                channel_id SERIAL PRIMARY KEY,
+                title VARCHAR(150) NOT NULL,
+                views INT,
+                subscribers INT,
+                videos INT,
+                channel_url TEXT
+            )
+        """)
+    with conn.cursor() as cur:
+        cur.execute("""
+            CREATE TABLE videos (
+                video_id SERIAL PRIMARY KEY,
+                channel_id INT REFERENCES channel(channel_id),
+                title VARCHAR NOT NULL,
+                publish_date DATE,
+                video_url TEXT
+            )
+        """)
+    conn.commit()
+    conn.close()
 
 
 def save_data_to_database(data: list[dict[str, Any]], database_name: str, params: dict) -> None:
