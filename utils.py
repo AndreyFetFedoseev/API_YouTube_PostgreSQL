@@ -15,9 +15,7 @@ def get_youtube_data(key: str, channel_ids: list[str]) -> list[dict[str, Any]]:
             channel_video = youtube.search().list(part='snippet,id', channelId=channel_id, type='video', order='date',
                                                   maxResults=50, pageToken=next_page_token).execute()
             data_videos.extend(channel_video['items'])
-            print(next_page_token)
             next_page_token = channel_video.get('nextPageToken')
-            print(next_page_token)
             if not next_page_token:
                 break
         data.append(
@@ -78,8 +76,7 @@ def save_data_to_database(data: list[dict[str, Any]], database_name: str, params
                          channel_stat['subscriberCount'], channel_stat['videoCount'],
                          f"https://www.youtube.com/channel/{channel['channel']['id']}")
                         )
-            channel_id = cur.fetchone()[0]  # (1,)
-            print(channel_id)
+            channel_id = cur.fetchone()[0]
             videos_data = channel['videos']
             for video in videos_data:
                 cur.execute("""
