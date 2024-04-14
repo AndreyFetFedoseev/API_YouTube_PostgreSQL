@@ -7,16 +7,17 @@ def get_youtube_data(key: str, channel_ids: list[str]) -> list[dict[str, Any]]:
     youtube = build('youtube', 'v3', developerKey=key)
 
     data = []
-    data_videos = []
     next_page_token = None
     for channel_id in channel_ids:
         channel_data = youtube.channels().list(part='snippet, statistics', id=channel_id).execute()
+        data_videos = []
         while True:
             channel_video = youtube.search().list(part='snippet,id', channelId=channel_id, type='video', order='date',
                                                   maxResults=50, pageToken=next_page_token).execute()
             data_videos.extend(channel_video['items'])
-
+            print(next_page_token)
             next_page_token = channel_video.get('nextPageToken')
+            print(next_page_token)
             if not next_page_token:
                 break
         data.append(
@@ -42,7 +43,7 @@ def create_database(database_name: str, params: dict) -> None:
         cur.execute("""
             CREATE TABLE channel (
                 channel_id SERIAL PRIMARY KEY,
-                title VARCHAR(150) NOT NULL,
+                title VARCHAR(255) NOT NULL,
                 views INT,
                 subscribers INT,
                 videos INT,
@@ -75,17 +76,18 @@ def save_data_to_database(data: list[dict[str, Any]], database_name: str, params
                 """,
                         (channel['channel']['snippet']['title'], channel_stat['viewCount'],
                          channel_stat['subscriberCount'], channel_stat['videoCount'],
-                         f"https://wwww.youtube.com/channel/{channel_stat['channel']['id']}")
+                         f"https://www.youtube.com/channel/{channel['channel']['id']}")
                         )
             channel_id = cur.fetchone()[0]  # (1,)
+            print(channel_id)
             videos_data = channel['videos']
             for video in videos_data:
                 cur.execute("""
                                 INSERT INTO videos (channel_id, title, publish_date, video_url)
                                 VALUES (%s, %s, %s, %s)
                                 """,
-                            (channel_id, video['snippet']['title'], video['publish_date'],
-                             f"https://wwww.youtube.com/watch?v={video['id']['videoId']}")
+                            (channel_id, video['snippet']['title'], video['snippet']['publishedAt'],
+                             f"https://www.youtube.com/watch?v={video['id']['videoId']}")
                             )
     conn.commit()
     conn.close()
