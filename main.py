@@ -11,7 +11,7 @@ def main():
 
     channel_ids = [
         'UCepPgPC1WzzWcjcrzU_vqcg',  # AISPIK
-        # 'UClQ5yO2ZLZIs_Ii7J-C57ww',  # AISPIK
+        # 'UClQ5yO2ZLZIs_Ii7J-C57ww',  # Апполинария Гордиенко
         'UCECdSNRGBOi5im0sfZvlkIg'  # fct-altai
     ]
 
