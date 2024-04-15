@@ -10,13 +10,14 @@ def main():
     params = config()
 
     channel_ids = [
-        'UClQ5yO2ZLZIs_Ii7J-C57ww',  # AISPIK
+        'UCepPgPC1WzzWcjcrzU_vqcg',  # AISPIK
+        # 'UClQ5yO2ZLZIs_Ii7J-C57ww',  # AISPIK
         'UCECdSNRGBOi5im0sfZvlkIg'  # fct-altai
     ]
 
-    # data = get_youtube_data(API_KEY, channel_ids)
+    data = get_youtube_data(API_KEY, channel_ids)
     create_database('youtube', params)
-    # save_data_to_database(data, 'youtube', params)
+    save_data_to_database(data, 'youtube', params)
 
 
 if __name__ == '__main__':
